@@ -1,4 +1,4 @@
-## RESTFUL Microservices for Airport Security
+## RESTful Microservices for Airport Security
 
 This repository contains my solutions for a course assignment divided into four partial tasks a-d.  The overall topic is the development of an airport security system based on microservices instead of a monolithic architecture. 
 
