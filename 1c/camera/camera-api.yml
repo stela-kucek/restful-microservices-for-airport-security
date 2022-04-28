@@ -1,0 +1,191 @@
+openapi: '3.0.0'
+info:
+  description: "Written for Cloud Computing 2020W lecture."
+  version: "1.0.0"
+  title: "Camera Service REST API Specification"
+servers:
+  - url: '{protocol}://localhost:3100'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+tags:
+- name: "camera"
+  description: "Camera Service API"
+paths:
+  /config:
+    put:
+      summary: "Alter Camera service configuration"
+      tags:
+      - "camera"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/config'
+      responses:
+        '201':
+          description: "SUCCESS"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+    get:
+      tags:
+      - "camera"
+      summary: "Read Camera service configuration"
+      responses:
+        '200':
+          description: "SUCCESS"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/config"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"             
+  /frame:
+    get:
+      tags:
+      - "camera"
+      summary: "Captures a image in different formats"
+      description: "Captures an image and returns it in a JSON object, or as a raw image to the requestor. You can use HTTP headers to switch between the types."
+      responses:
+        '200':
+          description: "SUCCESS"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/frame'
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"  
+  /stream:
+    post:
+      tags:
+      - "camera"
+      summary: "Start streaming images to a given destination service"
+      description: "Initiate streaming of images to the specified destination service."
+      parameters:
+        - in: query
+          name: toggle
+          schema:
+            enum:
+            - "on"
+            - "off"
+            default: "on"
+          description: "Toggle streaming ON or OFF" 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/stream'
+      responses:
+        '201':
+          description: "SUCCESS"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /probe:
+    get:
+      tags:
+      - "camera"
+      summary: "Returns 200 if service is up."
+      description: ""
+      responses:
+        '200':
+          description: "SUCCESS"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"   
+components:
+  schemas:
+    config:
+      type: "object"
+      required:
+      - "section"
+      - "event"
+      properties:
+        section:
+          type: "integer"
+          format: "int64"
+        event:
+          type: "string"
+          enum:
+          - "Entry"
+          - "Exit"
+        name:
+          type: "string"
+          example: "Camera <number>"
+    stream:
+      type: "object"
+      required:
+      - "destination"
+      properties:
+        destination:
+          type: "string"
+          format: "url"
+        max-frames:
+          type: "integer"
+          format: "int32" 
+        delay:
+          type: "integer"
+          format: "int32"  
+        extra-info:
+          type: "string"
+          format: "date-time"
+    frame:
+      type: "object"
+      properties:
+        section:
+          type: "integer"
+          format: "int64"
+        image:
+          type: "string"
+          example: "<base64-encoded-image>"
+        timestamp:
+          type: "string"
+          format: "date-time"
+        event:
+          type: "string"
+          enum:
+          - "Entry"
+          - "Exit"
+    ApiResponse:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        type:
+          type: "string"
+        message:
+          type: "string"

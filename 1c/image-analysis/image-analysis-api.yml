@@ -1,0 +1,120 @@
+openapi: '3.0.0'
+info:
+  description: "Written for the Cloud Computing 2020W lecture."
+  version: "1.0.0"
+  title: "Image Analysis REST API Specification"
+servers:
+- url: http://localhost:3200/
+tags:
+- name: "image-analysis"
+  description: "Image Analysis Service API"
+paths:
+  /frame:
+    post:
+      tags:
+      - "image-analysis"
+      summary: "Submit an image for processing."
+      description: "This service analyzes a given image for human faces. It tries to estimate age and gender of people detected on the image (this service cannot recognize a person)."
+      requestBody:
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/frame'
+          image/jpeg:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: "SUCCESS"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/annotated-frame'
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"     
+  /probe:
+    get:
+      tags:
+      - "image-analysis"
+      summary: "Returns 200 if service is up."
+      description: ""
+      responses:
+        '200':
+          description: "SUCCESS"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"   
+components:
+  schemas:
+    frame:
+      type: "object"
+      required: 
+      - image
+      properties:
+        timestamp:
+          type: "string"
+          format: date-time
+        section:
+          type: "integer"
+          format: "int64"
+        event:
+          type: "string"
+          enum:
+          - "entry"
+          - "exit"
+        destination:
+          type: "string"
+        image:
+          type: "string"
+          format: "byte"
+        extra-info:
+          type: "string"
+    annotated-frame:
+      type: "object"
+      required: 
+      - image
+      - persons
+      properties:
+        timestamp:
+          type: "string"
+          format: date-time
+        section:
+          type: "integer"
+          format: "int64"
+        image:
+          type: "string"
+          format: "base64"
+        event:
+          type: "string"
+          enum:
+          - "entry"
+          - "exit"
+        persons:
+          type: array
+          items:
+            type: object
+            properties:
+              age:
+                type: string
+              gender:
+                type: string
+        extra-info:
+          type: "string"
+    ApiResponse:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        type:
+          type: "string"
+        message:
+          type: "string"

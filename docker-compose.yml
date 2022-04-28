@@ -1,0 +1,17 @@
+version: '3'
+networks:
+  default:
+    name: service-network
+services:
+  service-1a:
+    build: ./service-1a
+    image: service-1a
+    container_name: service-1a
+    ports:
+      - "8080:80"
+  service-1b:
+    build: ./service-1b
+    image: service-1b
+    container_name: service-1b
+    ports:
+      - "8081:81"

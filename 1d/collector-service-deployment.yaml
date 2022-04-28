@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: collector
+  template:
+    metadata:
+      labels:
+        component: collector
+    spec:
+      containers:
+        - name: collector
+          image: a1303858/collector
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: collector
+spec:
+  type: ClusterIP
+  selector:
+    component: collector
+  ports:
+    - port: 80
+      targetPort: 80

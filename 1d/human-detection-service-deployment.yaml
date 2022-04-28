@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: human-detection-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: human-detection
+  template:
+    metadata:
+      labels:
+        component: human-detection
+    spec:
+      containers:
+        - name: human-detection
+          image: a1303858/human-detection
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: human-detection
+spec:
+  type: ClusterIP
+  selector:
+    component: human-detection
+  ports:
+    - port: 80
+      targetPort: 80

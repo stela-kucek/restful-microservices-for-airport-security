@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-analysis-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: image-analysis
+  template:
+    metadata:
+      labels:
+        component: image-analysis
+    spec:
+      containers:
+        - name: image-analysis
+          image: ccuni/image-analysis-service-2020w
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-analysis
+spec:
+  type: ClusterIP
+  selector:
+    component: image-analysis
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera1-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: camera-1
+  template:
+    metadata:
+      labels:
+        component: camera-1
+    spec:
+      containers:
+        - name: camera-1
+          image: ccuni/camera-service-2020w
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camera-1
+spec:
+  type: ClusterIP
+  selector:
+    component: camera-1
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: camera-2
+  template:
+    metadata:
+      labels:
+        component: camera-2
+    spec:
+      containers:
+        - name: camera-2
+          image: ccuni/camera-service-2020w
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camera-2
+spec:
+  type: ClusterIP
+  selector:
+    component: camera-2
+  ports:
+    - port: 80
+      targetPort: 80

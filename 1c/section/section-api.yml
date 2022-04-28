@@ -1,0 +1,177 @@
+openapi: '3.0.0'
+info:
+  description: "Written for the Cloud Computing 2020W lecture."
+  version: "1.0.0"
+  title: "Section REST API Specification"
+servers:
+- url: http://localhost:3400/
+tags:
+- name: "section"
+  description: "Section Service API"
+paths:
+  /persons:
+    get:
+      tags:
+      - "section"
+      summary: "A list of persons recorded in a section in a given time frame."
+      description: "The list can be filtered by time, event type (exit/entry), section number and aggergated (count)."
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: "string"
+            format: "date-time"
+          description: Beginning of the time frame
+          required: true
+        - in: query
+          name: to
+          schema:
+            type: "string"
+            format: "date-time"
+          description: End of the time frame
+          required: true
+        - in: query
+          name: aggregate
+          schema:
+            enum:
+            - "count"
+          description: Count the returned items 
+        - in: query
+          name: event
+          schema:
+            type: "string"
+            enum:
+            - "entry"
+            - "exit"
+          description: Filter by event type
+        - in: query
+          name: section
+          schema:
+            type: "integer"
+          description: Filter by Section number
+      responses:
+        '200':
+          description: "SUCCESS"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/person-array'
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"    
+    post:
+      tags:
+      - "section"
+      summary: "Creates a new entry in the list of detected persons passing through a section."
+      requestBody:
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/annotated-frame'
+          image/jpeg:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: "SUCCESS"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"     
+  /probe:
+    get:
+      tags:
+      - "section"
+      summary: "Returns 200 if service is up."
+      description: ""
+      responses:
+        '200':
+          description: "SUCCESS"
+        '4XX':
+          description: "ERROR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"   
+components:
+  schemas:
+    person:
+      type: "object"
+      properties:
+        uuid:
+          type: "string"
+          format: "uuid"
+        age:
+          type: "string"
+          format: "byte"
+        gender:
+          type: "string"
+          format: "byte"
+        section:
+          type: "integer"
+          format: "int32"
+        event:
+          type: "string"
+          enum:
+          - "entry"
+          - "exit"
+        timestamp:
+          type: "string"
+          format: date-time
+        extra-info:
+          type: "string"
+    person-array:
+      type: "object"
+      properties:
+        persons:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/person'
+    annotated-frame:
+      type: "object"
+      required: 
+      - image
+      properties:
+        alert:
+          type: "integer"
+          format: "int64"
+        timestamp:
+          type: "string"
+          format: date-time
+        event:
+          type: "string"
+          enum:
+          - "entry"
+          - "exit"
+        destination:
+          type: "string"
+        persons:
+          type: array
+          items:
+            type: object
+            properties:
+              age:
+                type: string
+              gender:
+                type: string
+        image:
+          type: "string"
+          format: "byte"
+        extra-info:
+          type: "string"
+    ApiResponse:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        type:
+          type: "string"
+        message:
+          type: "string"

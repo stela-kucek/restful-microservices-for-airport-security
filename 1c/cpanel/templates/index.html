@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <script>
+        window.onload = function () {
+            var x = document.getElementById("card_config");
+            x.style.display = "block";
+        }
+    </script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Airport Security System</title>
+</head>
+<body>
+<div class="container-fluid text-center">
+    <div class="row">
+        <div class="w-50 mx-auto">
+            <h1>CPANEL</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="w-50 mx-auto">
+            <h2>Airport Security System</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Queries</h3>
+            <br>
+            <form method="get" action="{{ url_for('get_cameras') }}">
+                <button type="submit" class="btn btn-dark">Show all cameras</button>
+            </form>
+            <br>
+            {% if show_results %}
+                <div>
+                    <form method="get" action="{{ url_for('stream_cam1') }}">
+                        <button type="submit" class="btn btn-dark">Start streaming with Camera 1</button>
+                    </form>
+                </div>
+                <br>
+                <div class="text-center">
+                    <button id="btn1" type="button" class="btn btn-dark" onclick="myFunction()">Change config for Camera
+                        1
+                    </button>
+                </div>
+                <div id=card_config class="card d-none">
+                    <br>
+                    <div class="card-body">
+                        <h5 class="card-title">Change config for Camera 1</h5>
+                        <form method="post" action="{{ url_for('change_config_1') }}">
+                            <label for="section">Section:</label>
+                            <input type="number" id="section" name="section" class="form-control"
+                                   placeholder="section id"
+                                   value="{{ request.form['section'] }}"
+                                   min="1" max="9"/>
+                            <br>
+                            <h4>Select event:</h4>
+                            <br>
+                            <label for="entry">Entry</label>
+                            <input type="radio" id="entry" name="event" class="form-control"
+                                   value="entry" checked/>
+                            <br>
+                            <label for="exit">Exit</label>
+                            <input type="radio" id="exit" name="event" class="form-control"
+                                   value="exit"/>
+                            <br>
+                            <label for="cam_name">Insert camera name:</label>
+                            <input type="text" id="cam_name" name="cam_name" class="form-control"
+                                   value="{{ request.form['cam_name'] }}"/>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <form method="get" action="{{ url_for('stream_cam2') }}">
+                        <button type="submit" class="btn btn-dark">Start streaming with Camera 2</button>
+                    </form>
+                </div>
+                <br>
+                <div class="text-center">
+                    <button id="btn2" type="button" class="btn btn-dark" onclick="myFunction2()">Change config for
+                        Camera
+                        2
+                    </button>
+                </div>
+                <div id=card_config2 class="card d-none">
+                    <br>
+                    <div class="card-body">
+                        <h5 class="card-title">Change config for Camera 2</h5>
+                        <form method="post" action="{{ url_for('change_config_2') }}">
+                            <label for="section">Section:</label>
+                            <input type="number" id="section" name="section" class="form-control"
+                                   placeholder="section id"
+                                   value="{{ request.form['section'] }}"
+                                   min="1" max="9"/>
+                            <br>
+                            <h4>Select event:</h4>
+                            <br>
+                            <label for="entry">Entry</label>
+                            <input type="radio" id="entry" name="event" class="form-control"
+                                   value="entry" checked/>
+                            <br>
+                            <label for="exit">Exit</label>
+                            <input type="radio" id="exit" name="event" class="form-control"
+                                   value="exit"/>
+                            <br>
+                            <label for="cam_name">Insert camera name:</label>
+                            <input type="text" id="cam_name" name="cam_name" class="form-control"
+                                   value="{{ request.form['cam_name'] }}"/>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <br>
+            {% endif %}
+            <br>
+            <form method="get" action="{{ url_for('index') }}">
+                <button type="submit" class="btn btn-secondary">Home</button>
+            </form>
+        </div>
+
+        <div class="col text-center">
+            <h3>Results</h3>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1"></label>
+                <textarea id="area-1" class="form-control" id="exampleFormControlTextarea1" rows="18"
+                          style="width: 600px" readonly>{% if show_results %}{{ result }}{% endif %}
+                </textarea>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script>
+
+    function myFunction() {
+        var x = document.getElementById("card_config");
+        var y = document.getElementById("btn1");
+        if (x.classList.contains('d-none')) {
+            x.classList.remove('d-none');
+            x.classList.add('d-block');
+            y.innerText = "Cancel";
+        } else {
+            x.classList.remove('d-block');
+            x.classList.add('d-none');
+            y.innerText = "Change config for Camera 1";
+        }
+    }
+
+    function myFunction2() {
+        var x = document.getElementById("card_config2");
+        var y = document.getElementById("btn2");
+        if (x.classList.contains('d-none')) {
+            x.classList.remove('d-none');
+            x.classList.add('d-block');
+            y.innerText = "Cancel";
+        } else {
+            x.classList.remove('d-block');
+            x.classList.add('d-none');
+            y.innerText = "Change config for Camera 2";
+        }
+    }
+
+</script>
+</body>
+</html>

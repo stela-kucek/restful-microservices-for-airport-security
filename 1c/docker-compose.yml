@@ -1,0 +1,104 @@
+version: '3'
+networks:
+  default:
+    name: service-network
+services:
+  camera-service-1:
+    build: ./camera
+    image: ccuni/camera-service-2020w
+    container_name: camera-1
+    ports:
+      - "3100:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+  camera-service-2:
+    build: ./camera
+    image: ccuni/camera-service-2020w
+    container_name: camera-2
+    ports:
+      - "3101:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+  image-analysis-service:
+    build: ./image-analysis
+    image: ccuni/image-analysis-service-2020w
+    container_name: image-analysis
+    ports:
+      - "3200:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory:  256M
+  face-recognition-service:
+    build: ./face-recognition
+    image: ccuni/face-recognition-service-2020w
+    container_name: face-recognition
+    ports:
+      - "3300:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory:  256M
+  section-service:
+    build: ./section
+    image: ccuni/section-service-2020w
+    container_name: section
+    ports:
+      - "3400:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+  alert-service:
+    build: ./alert
+    image: ccuni/alert-service-2020w
+    container_name: alert
+    ports:
+      - "3500:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+  human-detection-service:
+    build: ./human-detection
+    image: human-detection-service
+    container_name: human-detection
+    ports:
+      - "3600:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+  collector-service:
+    build: ./collector
+    image: collector-service
+    container_name: collector
+    ports:
+      - "3700:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+  cpanel-service:
+    build: ./cpanel
+    image: cpanel-service
+    container_name: cpanel
+    ports:
+      - "3800:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
